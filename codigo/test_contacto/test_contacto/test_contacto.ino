@@ -1,12 +1,18 @@
-int HIT_SENSOR_PIN = 3;
-int LED_BOARD = 13;
+int RIGHT_SENSOR_PIN = 9;
+int LEFT_SENSOR_PIN = 10;
 
+int hit_cts = 0;
 void setup() {
-  pinMode(LED_BOARD, OUTPUT);
-  pinMode(HIT_SENSOR_PIN, INPUT);
-
+  pinMode(LEFT_SENSOR_PIN, INPUT);
+  pinMode(RIGHT_SENSOR_PIN, INPUT);
+  Serial.begin(9600);
 }
 
 void loop() {
- digitalWrite(LED_BOARD, digitalRead(HIT_SENSOR_PIN));
+ if ((digitalRead(LEFT_SENSOR_PIN) == 1) || (digitalRead(RIGHT_SENSOR_PIN))){
+   hit_cts++;
+   Serial.println("HIT");
+   Serial.println(hit_cts);
+
+ }
 }
