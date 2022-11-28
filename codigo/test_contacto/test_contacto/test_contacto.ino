@@ -1,5 +1,5 @@
-int RIGHT_SENSOR_PIN = 9;
-int LEFT_SENSOR_PIN = 10;
+int RIGHT_SENSOR_PIN = 2;
+int LEFT_SENSOR_PIN = 3;
 
 int hit_cts = 0;
 void setup() {
