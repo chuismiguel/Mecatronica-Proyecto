@@ -99,11 +99,11 @@ void drive_motors() {
 }
 
 void detect_dmg() {
-  if ((dmg_flag == 0) && (millis - stopped_t > 250)){
+  // if ((dmg_flag == 0) && (millis() - stopped_t > 250)){
     health--;
     bt_serial.write(health);
     Serial.println(health);
-  }
+  //}
 }
 
 void setup() {
@@ -116,7 +116,7 @@ void setup() {
   pinMode(LEFT_SENSOR_PIN, INPUT_PULLUP);
   pinMode(WEAPON, OUTPUT);
 
-  health = 100;
+  health = 20;
 
   bt_serial.begin(9600);
 
@@ -126,6 +126,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(LEFT_SENSOR_PIN), detect_dmg, FALLING);
 
   dmg_flag = 0;
+  stopped_t = millis();
 } 
 
 void loop() {
