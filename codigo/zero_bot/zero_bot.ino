@@ -1,10 +1,10 @@
-
+#include <Servo.h>
 #include <SoftwareSerial.h>
 
 const int HIT_REBOUND = 1000; 
 
 const unsigned int RIGHT_SENSOR_PIN = 8;
-const unsigned int LEFT_SENSOR_PIN = 90;
+const unsigned int LEFT_SENSOR_PIN = 9; 
 
 const unsigned int IN1_A = 2;
 const unsigned int IN2_A = 3;
@@ -12,8 +12,8 @@ const unsigned int IN2_A = 3;
 const unsigned int IN1_B = 4;
 const unsigned int IN2_B = 5;
 
-const unsigned int WEAPON = 10
-;
+Servo weapon_servo;
+const unsigned int WEAPON = 10;
 
 int last_hit_t = 0;
 char val;
@@ -22,7 +22,7 @@ int health;
 int dmg_flag;
 int stopped_t;
 
-SoftwareSerial bt_serial(5,6);
+SoftwareSerial bt_serial(6,7);
 
 void motors_fwd() {
   digitalWrite(IN1_A , HIGH);
@@ -61,8 +61,18 @@ void motors_stop() {
 }
 
 
-void hit_weapon() {                          
-  digitalWrite(WEAPON , HIGH);
+void hit_weapon() {
+  int pos;
+  for (pos = 150; pos >= 30; pos -= 1) { // goes from 180 degrees to 0 degrees
+    weapon_servo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(1);                       // waits 15ms for the servo to reach the position
+  }
+  delay(500);                        
+  for (pos = 30; pos <= 150; pos += 1) { // goes from 0 degrees to 180 degrees
+    weapon_servo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(3);                       // waits 15ms for the servo to reach the position
+  }
+  
 }
 
 void drive_motors() {
@@ -117,6 +127,7 @@ void setup() {
   pinMode(LEFT_SENSOR_PIN, INPUT_PULLUP);
   pinMode(WEAPON, OUTPUT);
 
+  weapon_servo.attach(WEAPON);
   health = 20;
 
   bt_serial.begin(9600);
