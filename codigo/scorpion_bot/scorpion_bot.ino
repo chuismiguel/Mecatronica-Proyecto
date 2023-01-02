@@ -99,11 +99,9 @@ void drive_motors() {
 }
 
 void detect_dmg() {
-  // if ((dmg_flag == 0) && (millis() - stopped_t > 250)){
     health--;
     bt_serial.write(health);
     Serial.println(health);
-  //}
 }
 
 void setup() {
@@ -124,9 +122,6 @@ void setup() {
   
   attachInterrupt(digitalPinToInterrupt(RIGHT_SENSOR_PIN), detect_dmg, FALLING); // when starting, the alarm is on so we initialize the IR and the button to change alarm mode.
   attachInterrupt(digitalPinToInterrupt(LEFT_SENSOR_PIN), detect_dmg, FALLING);
-
-  dmg_flag = 0;
-  stopped_t = millis();
 } 
 
 void loop() {

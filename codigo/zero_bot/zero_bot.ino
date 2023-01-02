@@ -1,10 +1,8 @@
 #include <Servo.h>
 #include <SoftwareSerial.h>
 
-const int HIT_REBOUND = 1000; 
-
-const unsigned int RIGHT_SENSOR_PIN = 8;
-const unsigned int LEFT_SENSOR_PIN = 9; 
+const unsigned int RIGHT_SENSOR_PIN = 0;
+const unsigned int LEFT_SENSOR_PIN = 1; 
 
 const unsigned int IN1_A = 2;
 const unsigned int IN2_A = 3;
@@ -22,7 +20,7 @@ int health;
 int dmg_flag;
 int stopped_t;
 
-SoftwareSerial bt_serial(6,7);
+SoftwareSerial bt_serial(14,16);
 
 void motors_fwd() {
   digitalWrite(IN1_A , HIGH);
@@ -63,14 +61,14 @@ void motors_stop() {
 
 void hit_weapon() {
   int pos;
-  for (pos = 150; pos >= 30; pos -= 1) { // goes from 180 degrees to 0 degrees
-    weapon_servo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(1);                       // waits 15ms for the servo to reach the position
+  for (pos = 150; pos >= 30; pos -= 1) {
+    weapon_servo.write(pos);
+    delay(1);                      
   }
   delay(500);                        
-  for (pos = 30; pos <= 150; pos += 1) { // goes from 0 degrees to 180 degrees
-    weapon_servo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(3);                       // waits 15ms for the servo to reach the position
+  for (pos = 30; pos <= 150; pos += 1) { 
+    weapon_servo.write(pos);             
+    delay(3);                       
   }
   
 }
@@ -88,33 +86,25 @@ void drive_motors() {
     motors_bwd();
     dmg_flag = 1;
   }
-  if (val == '2') {
+  if (val == '3') {
     motors_left();
     dmg_flag = 1;
   }
-  if (val == '3') {
+  if (val == '2') {
     motors_right();
     dmg_flag = 1;
   }
   if (val == '4') {
     hit_weapon();
-    dmg_flag = 0;
-    stopped_t = millis();
   }
   if (val == '5') {
     motors_stop();
-    dmg_flag = 0;
-    stopped_t = millis();
-      
   }
 }
 
 void detect_dmg() {
-  // if ((dmg_flag == 0) && (millis() - stopped_t > 250)){
     health--;
     bt_serial.write(health);
-    Serial.println(health);
-  //}
 }
 
 void setup() {
@@ -128,6 +118,7 @@ void setup() {
   pinMode(WEAPON, OUTPUT);
 
   weapon_servo.attach(WEAPON);
+  weapon_servo.write(150);
   health = 20;
 
   bt_serial.begin(9600);
@@ -136,9 +127,6 @@ void setup() {
   
   attachInterrupt(digitalPinToInterrupt(RIGHT_SENSOR_PIN), detect_dmg, FALLING); // when starting, the alarm is on so we initialize the IR and the button to change alarm mode.
   attachInterrupt(digitalPinToInterrupt(LEFT_SENSOR_PIN), detect_dmg, FALLING);
-
-  dmg_flag = 0;
-  stopped_t = millis();
 } 
 
 void loop() {
